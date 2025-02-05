@@ -16,29 +16,4 @@ public class UsuarioService {
         this.repository = repository;
     }
 
-//    public Usuario findUsuarioById(Long id) throws Exception{
-//        return this.repository.findUsuarioById(id).orElseThrow(() -> new Exception("Não foi possível encontrar usuário"));
-//    }
-
-//    public void saveUsuario(Usuario usuario){
-//        this.repository.save(usuario);
-//    }
-//
-//    public void createUsuario(UsuarioCreateDTO usuarioCreateDTO) throws Exception {
-//        // Verificar se o e-mail já existe
-//        if (repository.findAll().stream().anyMatch(usuario -> usuario.getEmail().equals(usuarioCreateDTO.email()))) {
-//            throw new Exception("E-mail já cadastrado.");
-//        }
-//
-//        // Criar a entidade Usuario a partir do DTO
-//        Usuario usuario = new Usuario(
-//                usuarioCreateDTO.primeiroNome(),
-//                usuarioCreateDTO.ultimoNome(),
-//                usuarioCreateDTO.cargo(),
-//                usuarioCreateDTO.email()
-//        );
-//
-//        // Salvar no banco de dados
-//        repository.save(usuario);
-//    }
 }
