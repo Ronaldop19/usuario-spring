@@ -3,6 +3,7 @@ package com.controleusuario.controllers;
 import com.controleusuario.dtos.UsuarioCreateDTO;
 import com.controleusuario.entity.Usuario;
 import com.controleusuario.repositories.UsuarioRepository;
+import com.controleusuario.services.UsuarioService;
 import jdk.javadoc.doclet.Reporter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,38 +14,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-//    private final UsuarioService usuarioService;
+    private final UsuarioService usuarioService;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
     @GetMapping
     public ResponseEntity<?> getUsuarios(){
-        var allUsers = usuarioRepository.findAll();
-        System.out.println(allUsers);
-        return ResponseEntity.ok(allUsers);
+        return ResponseEntity.ok(usuarioService.getUsuarios());
     }
 
     @PostMapping
     public ResponseEntity<String> createUsuario(@RequestBody @Validated UsuarioCreateDTO usuarioCreateDTO){
-        Usuario newUsuario = new Usuario(usuarioCreateDTO);
-        usuarioRepository.save(newUsuario);
-        return ResponseEntity.ok().build();
+        usuarioService.createUsuario(usuarioCreateDTO);
+        return ResponseEntity.ok("Usuário criado com sucesso!");
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUsuario(@PathVariable Long id, @RequestBody @Validated UsuarioCreateDTO usuarioUpdateDTO) {
-        if (!usuarioRepository.existsById(id)) {
+        boolean atualizado = usuarioService.updateUsuario(id, usuarioUpdateDTO);
+        if (!atualizado)
             return ResponseEntity.status(404).body("Usuário não encontrado!");
-        }
-
-        Usuario usuario = usuarioRepository.getReferenceById(id);
-        usuario.setPrimeiroNome(usuarioUpdateDTO.primeiroNome());
-        usuario.setUltimoNome(usuarioUpdateDTO.ultimoNome());
-        usuario.setCargo(usuarioUpdateDTO.cargo());
-        usuario.setEmail(usuarioUpdateDTO.email());
-
-        usuarioRepository.save(usuario);
 
         return ResponseEntity.ok("Usuário atualizado com sucesso!");
     }
@@ -52,11 +46,10 @@ public class UsuarioController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUsuario(@PathVariable Long id) {
-        if (!usuarioRepository.existsById(id)) {
+        boolean deletado = usuarioService.deleteUsuario(id);
+        if (!deletado)
             return ResponseEntity.status(404).body("Usuário não encontrado!");
-        }
 
-        usuarioRepository.deleteById(id);
         return ResponseEntity.ok("Usuário deletado com sucesso!");
     }
 
