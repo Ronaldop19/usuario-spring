@@ -37,6 +37,11 @@ public class UsuarioService {
         if (!repository.existsById(id))
             return false;
 
+        Optional<Usuario> emailExistente = repository.findByEmail(dto.email());
+        if (emailExistente.isPresent()) {
+            throw new IllegalArgumentException("E-mail já se encontra em uso");
+        }
+
         Usuario usuario = repository.getReferenceById(id);
         usuario.setPrimeiroNome(dto.primeiroNome());
         usuario.setUltimoNome(dto.ultimoNome());
