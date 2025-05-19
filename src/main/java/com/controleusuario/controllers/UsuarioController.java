@@ -16,12 +16,10 @@ public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
-
     public UsuarioController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
+
 
     @GetMapping
     public ResponseEntity<?> getUsuarios(){

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -23,6 +24,11 @@ public class UsuarioService {
     }
 
     public void createUsuario(UsuarioCreateDTO dto) {
+        Optional<Usuario> emailExistente = repository.findByEmail(dto.email());
+        if (emailExistente.isPresent()) {
+            throw new IllegalArgumentException("E-mail já se encontra em uso");
+        }
+
         Usuario usuario = new Usuario(dto);
         repository.save(usuario);
     }

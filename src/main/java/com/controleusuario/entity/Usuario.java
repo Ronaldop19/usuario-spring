@@ -2,16 +2,20 @@ package com.controleusuario.entity;
 
 import com.controleusuario.dtos.UsuarioCreateDTO;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name="usuarios")
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(of="id")
 public class Usuario {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    private String primeiroNome;
+    private String ultimoNome;
+    private String cargo;
+    @Column(unique = true)
+    private String email;
+
     public void setPrimeiroNome(String primeiroNome) {
         this.primeiroNome = primeiroNome;
     }
@@ -47,15 +51,6 @@ public class Usuario {
     public String getEmail() {
         return email;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String primeiroNome;
-    private String ultimoNome;
-    private String cargo;
-    @Column(unique = true)
-    private String email;
 
     public Usuario(String primeiroNome, String ultimoNome, String cargo, String email) {
         this.primeiroNome = primeiroNome;
