@@ -1,7 +1,10 @@
 package com.controleusuario.services;
 
 import com.controleusuario.dtos.UsuarioCreateDTO;
+import com.controleusuario.entity.Role;
 import com.controleusuario.entity.Usuario;
+import com.controleusuario.exception.UserDataAlreadyExistsException;
+import com.controleusuario.repositories.RoleRepository;
 import com.controleusuario.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,24 +16,32 @@ import java.util.Optional;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final RoleRepository roleRepository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository repository){
+    public UsuarioService(UsuarioRepository repository, RoleRepository roleRepository){
         this.repository = repository;
+        this.roleRepository = roleRepository;
     }
 
     public List<Usuario> getUsuarios(){
         return repository.findAll();
     }
 
-    public void createUsuario(UsuarioCreateDTO dto) {
+    public Usuario createUsuario(UsuarioCreateDTO dto) {
         Optional<Usuario> emailExistente = repository.findByEmail(dto.email());
         if (emailExistente.isPresent()) {
-            throw new IllegalArgumentException("E-mail já se encontra em uso");
+            throw new UserDataAlreadyExistsException("E-mail já existe");
         }
 
-        Usuario usuario = new Usuario(dto);
+        Role role = roleRepository.findByName(
+                Optional.ofNullable(dto.roleName())
+                        .orElseThrow(() -> new IllegalArgumentException("O campo 'roleName' não pode ser nulo ou vazio."))
+        ).orElseThrow(() -> new IllegalArgumentException("Role não encontrada: " + dto.roleName()));
+
+        Usuario usuario = new Usuario(dto, role);
         repository.save(usuario);
+        return usuario;
     }
 
     public boolean updateUsuario(Long id, UsuarioCreateDTO dto){
@@ -39,7 +50,7 @@ public class UsuarioService {
 
         Optional<Usuario> emailExistente = repository.findByEmail(dto.email());
         if (emailExistente.isPresent()) {
-            throw new IllegalArgumentException("E-mail já se encontra em uso");
+            throw new UserDataAlreadyExistsException("E-mail já se encontra em uso");
         }
 
         Usuario usuario = repository.getReferenceById(id);

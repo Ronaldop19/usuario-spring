@@ -4,8 +4,10 @@ import com.controleusuario.dtos.UsuarioCreateDTO;
 import com.controleusuario.entity.Usuario;
 import com.controleusuario.repositories.UsuarioRepository;
 import com.controleusuario.services.UsuarioService;
+import jakarta.validation.Valid;
 import jdk.javadoc.doclet.Reporter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +29,9 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createUsuario(@RequestBody @Validated UsuarioCreateDTO usuarioCreateDTO){
-        usuarioService.createUsuario(usuarioCreateDTO);
-        return ResponseEntity.ok("Usuário criado com sucesso!");
+    public ResponseEntity<Usuario> createUsuario(@RequestBody @Valid UsuarioCreateDTO usuarioCreateDTO){
+        Usuario usuario = usuarioService.createUsuario(usuarioCreateDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuario);
     }
 
     @PutMapping("/{id}")

@@ -16,6 +16,18 @@ public class Usuario {
     @Column(unique = true)
     private String email;
 
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     public void setPrimeiroNome(String primeiroNome) {
         this.primeiroNome = primeiroNome;
     }
@@ -63,10 +75,11 @@ public class Usuario {
 
     }
 
-    public Usuario(UsuarioCreateDTO usuarioCreateDTO) {
+    public Usuario(UsuarioCreateDTO usuarioCreateDTO, Role role) {
         this.primeiroNome = usuarioCreateDTO.primeiroNome();
         this.ultimoNome = usuarioCreateDTO.ultimoNome();
         this.cargo = usuarioCreateDTO.cargo();
         this.email = usuarioCreateDTO.email();
+        this.role = role;
     }
 }
